@@ -13,7 +13,7 @@ def shutdown_session(exception=None):
 
 @app.route('/')
 def index():
-    bugs = Bug.query.all()
+    bugs = db_session.query(Bug).all()
     return render_template('index.html', bugs=bugs)
 
 @app.route('/create', methods=['GET', 'POST'])
@@ -28,12 +28,12 @@ def create_bug():
 
 @app.route('/edit/<int:bug_id>', methods=['GET', 'POST'])
 def edit_bug(bug_id):
-    bug = Bug.query.get(bug_id)
+    bug = db_session.get(Bug, bug_id)
     if request.method == 'POST':
         bug.title = request.form['title']
         bug.status = request.form['status']
         if bug.status == 'Done' and bug.completion_date is None:
-            bug.completion_date = datetime.datetime.utcnow()
+            bug.completion_date = datetime.datetime.now(datetime.UTC)
         elif bug.status != 'Done':
             bug.completion_date = None
         db_session.commit()
@@ -42,11 +42,11 @@ def edit_bug(bug_id):
 
 @app.route('/update_status/<int:bug_id>', methods=['POST'])
 def update_status(bug_id):
-    bug = Bug.query.get(bug_id)
+    bug = db_session.get(Bug, bug_id)
     if bug:
         bug.status = request.form['status']
         if bug.status == 'Done' and bug.completion_date is None:
-            bug.completion_date = datetime.datetime.utcnow()
+            bug.completion_date = datetime.datetime.now(datetime.UTC)
         elif bug.status != 'Done':
             bug.completion_date = None
         db_session.commit()
@@ -54,7 +54,7 @@ def update_status(bug_id):
 
 @app.route('/delete/<int:bug_id>', methods=['POST'])
 def delete_bug(bug_id):
-    bug = Bug.query.get(bug_id)
+    bug = db_session.get(Bug, bug_id)
     db_session.delete(bug)
     db_session.commit()
     return redirect(url_for('index'))
