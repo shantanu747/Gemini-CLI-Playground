@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h2>Edit Bug</h2>
+        <form method="post">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title" class="form-control" value="{{ bug.title }}" required>
+            </div>
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select name="status" id="status" class="form-control">
+                    <option value="To Do" {% if bug.status == 'To Do' %}selected{% endif %}>To Do</option>
+                    <option value="In Progress" {% if bug.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                    <option value="Done" {% if bug.status == 'Done' %}selected{% endif %}>Done</option>
+                    <option value="Not Needed" {% if bug.status == 'Not Needed' %}selected{% endif %}>Not Needed</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Save Changes</button>
+        </form>
+    </div>
+{% endblock %}
